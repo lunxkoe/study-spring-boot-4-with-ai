@@ -5,21 +5,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import study.springbootdeveloper.domain.Article;
-import study.springbootdeveloper.dto.AddArticleRequest;
-import study.springbootdeveloper.dto.ArticleResponse;
-import study.springbootdeveloper.dto.UpdateArticleRequest;
+import study.springbootdeveloper.dto.*;
 import study.springbootdeveloper.service.BlogService;
+import study.springbootdeveloper.service.WritingAssistantService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/articles")
-public class BlogController {
+//@RequestMapping("/api/articles")
+public class BlogApiController {
 
     private final BlogService blogService;
+    private final WritingAssistantService writingAssistantService;
 
-    @PostMapping()
+    @PostMapping("/api/articles")
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
         Article response = blogService.save(request);
 
@@ -28,7 +28,7 @@ public class BlogController {
                 .body(response);
     }
 
-    @GetMapping()
+    @GetMapping("/api/articles")
     public ResponseEntity<List<ArticleResponse>> findAllArticles() {
         List<ArticleResponse> response = blogService.findAll().stream()
                 .map(ArticleResponse::from)
@@ -39,7 +39,7 @@ public class BlogController {
                 .body(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/articles/{id}")
     public ResponseEntity<ArticleResponse> findArticle(@PathVariable Long id) {
         Article article = blogService.findById(id);
 
@@ -48,7 +48,7 @@ public class BlogController {
                 .body(ArticleResponse.from(article));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/articles/{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
         blogService.delete(id);
 
@@ -57,9 +57,19 @@ public class BlogController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/articles/{id}")
     public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody UpdateArticleRequest request) {
         Article response = blogService.update(id, request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    // LLM Function
+    @PostMapping("/api/ai-suggestions")
+    public ResponseEntity<WritingSuggestionResponse> writingAssist(@RequestBody WritingSuggestionRequest request) {
+        WritingSuggestionResponse response = writingAssistantService.getWritingAssist(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
