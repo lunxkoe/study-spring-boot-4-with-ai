@@ -11,5 +11,3 @@ public class S02PApplication {
     }
 
 }
-
-// 6.4부터 시작
