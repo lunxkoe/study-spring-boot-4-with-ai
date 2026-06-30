@@ -29,3 +29,7 @@ logging:
   level:
     org.hibernate.SQL: debug # SQL 실행 로그 출력
     org.hibernate.orm.jdbc.bind: trace # (Spring Boot 3.x 이상) 파라미터 바인딩 값 출력
+
+jwt:
+  issuer: lunxkoe@gmail.com
+  secret_key: study-springboot
