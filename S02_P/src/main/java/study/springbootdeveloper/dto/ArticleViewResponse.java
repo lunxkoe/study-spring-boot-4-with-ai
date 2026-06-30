@@ -8,10 +8,11 @@ public record ArticleViewResponse(
         Long id,
         String title,
         String content,
+        String imageUrl,
         LocalDateTime createdAt
 ) {
     public ArticleViewResponse() {
-        this(null, "", "", LocalDateTime.now());
+        this(null, "", "", "", LocalDateTime.now());
     }
 
     public static ArticleViewResponse from(Article article) {
@@ -19,6 +20,7 @@ public record ArticleViewResponse(
                 article.getId(),
                 article.getTitle(),
                 article.getContent(),
+                article.getImageUrl(),
                 article.getCreatedAt()
         );
     }

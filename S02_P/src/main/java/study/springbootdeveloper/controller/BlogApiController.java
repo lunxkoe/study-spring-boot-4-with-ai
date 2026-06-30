@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import study.springbootdeveloper.domain.Article;
 import study.springbootdeveloper.dto.*;
 import study.springbootdeveloper.service.BlogService;
+import study.springbootdeveloper.service.ThumbnailGeneratorService;
 import study.springbootdeveloper.service.WritingAssistantService;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class BlogApiController {
 
     private final BlogService blogService;
     private final WritingAssistantService writingAssistantService;
+    private final ThumbnailGeneratorService thumbnailGeneratorService;
 
     @PostMapping("/api/articles")
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
@@ -70,6 +72,15 @@ public class BlogApiController {
     @PostMapping("/api/ai-suggestions")
     public ResponseEntity<WritingSuggestionResponse> writingAssist(@RequestBody WritingSuggestionRequest request) {
         WritingSuggestionResponse response = writingAssistantService.getWritingAssist(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @PostMapping("/api/ai-thumbnails")
+    public ResponseEntity<GeneratorThumbnailResponse> thumbnailGenerator(@RequestBody GeneratorThumbnailRequest request) {
+        GeneratorThumbnailResponse response = thumbnailGeneratorService.generatorThumbnail(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

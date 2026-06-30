@@ -1,3 +1,106 @@
+// 페이지 로드 시 기존 이미지 표시
+window.addEventListener('DOMContentLoaded', () => {
+    const imageUrl = document.getElementById('image-url')?.value;
+    if (imageUrl) {
+        displayImagePreview(imageUrl);
+    }
+});
+
+// 이미지 업로드 버튼
+const imageUpload = document.getElementById('image-upload');
+if (imageUpload) {
+    imageUpload.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('이미지 파일만 업로드 가능합니다.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        }).then((response) => {
+            if (!response.ok) {
+                alert('이미지 업로드에 실패했습니다.');
+                throw new Error();
+            }
+            return response.json();
+        })
+            .then((data) => {
+                document.getElementById('image-url').value = data.imageUrl;
+                displayImagePreview(data.imageUrl);
+            })
+            .catch((e) => console.error(e));
+    });
+}
+
+// 이미지 미리보기를 위한 함수
+function displayImagePreview(imageUrl) {
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+
+    if (preview && previewImg && imageUrl) {
+        previewImg.src = imageUrl;
+        preview.style.display = 'block';
+    }
+}
+
+// 이미지 제거 버튼
+const removeImageButton = document.getElementById('remove-image-btn');
+if (removeImageButton) {
+    removeImageButton.addEventListener('click', () => {
+        document.getElementById('image-url').value = '';
+        document.getElementById('image-upload').value = '';
+        document.getElementById('image-preview').style.display = 'none';
+    });
+}
+
+// AI 썸네일 생성 버튼
+const aiThumbnailButton = document.getElementById('ai-thumbnail-btn');
+if (aiThumbnailButton) {
+    aiThumbnailButton.addEventListener('click', async () => {
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        if (!title.trim() && !content.trim()) {
+            alert('제목이나 내용을 먼저 입력해주세요.');
+            return;
+        }
+
+        const loadingDiv = document.getElementById('ai-thumbnail-loading');
+        loadingDiv.style.display = 'block';
+        aiThumbnailButton.disabled = true;
+
+        fetch('/api/ai-thumbnails', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title,
+                content: content
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                alert('썸네일 생성에 실패했습니다.');
+                throw new Error();
+            }
+            return response.json();
+        }).then((data) => {
+            document.getElementById('image-url').value = data.imageUrl;
+            displayImagePreview(data.imageUrl);
+        }).finally(() => {
+            loadingDiv.style.display = 'none';
+            aiThumbnailButton.disabled = false;
+        });
+    });
+}
+
 // 삭제 기능
 const deleteButton = document.getElementById('delete-btn');
 
@@ -51,7 +154,8 @@ if (createButton) {
             },
             body: JSON.stringify({
                 title: document.getElementById('title').value,
-                content: document.getElementById('content').value
+                content: document.getElementById('content').value,
+                imageUrl: document.getElementById('image-url').value
             })
         })
             .then(() => {
@@ -145,3 +249,4 @@ if (suggestionContent) {
         }
     });
 }
+
