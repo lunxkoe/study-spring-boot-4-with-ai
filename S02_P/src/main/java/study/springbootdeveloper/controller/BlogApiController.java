@@ -10,6 +10,7 @@ import study.springbootdeveloper.service.BlogService;
 import study.springbootdeveloper.service.ThumbnailGeneratorService;
 import study.springbootdeveloper.service.WritingAssistantService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,8 +23,8 @@ public class BlogApiController {
     private final ThumbnailGeneratorService thumbnailGeneratorService;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
-        Article response = blogService.save(request);
+    public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request, Principal principal) {
+        Article response = blogService.save(request, principal.getName());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

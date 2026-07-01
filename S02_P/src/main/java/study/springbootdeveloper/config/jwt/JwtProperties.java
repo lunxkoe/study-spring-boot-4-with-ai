@@ -1,4 +1,4 @@
-package study.springbootdeveloper.config;
+package study.springbootdeveloper.config.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

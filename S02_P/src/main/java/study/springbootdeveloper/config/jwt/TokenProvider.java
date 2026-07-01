@@ -1,4 +1,4 @@
-package study.springbootdeveloper.config;
+package study.springbootdeveloper.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;

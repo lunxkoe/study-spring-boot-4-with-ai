@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import study.springbootdeveloper.config.jwt.JwtProperties;
+import study.springbootdeveloper.config.jwt.TokenProvider;
 import study.springbootdeveloper.domain.User;
 import study.springbootdeveloper.repository.UserRepository;
 

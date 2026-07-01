@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import study.springbootdeveloper.config.JwtFactory;
-import study.springbootdeveloper.config.JwtProperties;
+import study.springbootdeveloper.config.jwt.JwtProperties;
 import study.springbootdeveloper.domain.RefreshToken;
 import study.springbootdeveloper.domain.User;
 import study.springbootdeveloper.dto.CreateAccessTokenRequest;

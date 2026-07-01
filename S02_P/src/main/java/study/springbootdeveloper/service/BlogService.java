@@ -1,6 +1,7 @@
 package study.springbootdeveloper.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.springbootdeveloper.domain.Article;
@@ -18,8 +19,8 @@ public class BlogService {
     private final BlogRepository blogRepository;
 
     @Transactional
-    public Article save(AddArticleRequest request) {
-        return blogRepository.save(request.toEntity());
+    public Article save(AddArticleRequest request, String userName) {
+        return blogRepository.save(request.toEntity(userName));
     }
 
     public List<Article> findAll() {
@@ -33,7 +34,10 @@ public class BlogService {
 
     @Transactional
     public void delete(Long id) {
-        blogRepository.deleteById(id);
+        Article foundArticle = blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+        authorizeArticleAuthor(foundArticle);
+        blogRepository.delete(foundArticle);
     }
 
     @Transactional
@@ -41,8 +45,18 @@ public class BlogService {
         Article foundArticle = blogRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found " + id));
 
+        authorizeArticleAuthor(foundArticle);
+
         foundArticle.update(request.title(), request.content(), request.imageUrl());
 
         return foundArticle;
+    }
+
+    private static void authorizeArticleAuthor(Article article) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!article.getAuthor().equals(username)) {
+            throw new IllegalArgumentException("not authorized");
+        }
     }
 }
